@@ -43,9 +43,8 @@
 
 :root {
 
-  --bg-slate-200: oklch(0.929 0.013 255.508);
   --radius: 0.625rem;
-  --background: var(--bg-slate-200); /*oklch(1 0 0)*/
+  --background: #ecf0fc;
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);

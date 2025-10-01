@@ -7,3 +7,7 @@ export function estimateSizeInMb(text: string): number {
   const encoded = new TextEncoder().encode(text);
   return encoded.length / 1024 / 1024;
 }
+
+export function pluralize(n: number, singular: string, plural: string) {
+  return `${n} ${n === 1 ? singular : plural}`;
+}

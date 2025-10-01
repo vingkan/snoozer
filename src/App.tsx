@@ -7,6 +7,7 @@ import { BASENAME, useStaticRedirect } from "./lib/redirect";
 import NotFoundPage from "./pages/notfound";
 
 const HomePage = lazy(() => import("./pages/index"));
+const ExamplePage = lazy(() => import("./pages/example"));
 
 function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -36,6 +37,14 @@ function AppPages() {
         element={
           <LoadingPage>
             <HomePage />
+          </LoadingPage>
+        }
+      />
+      <Route
+        path="/example"
+        element={
+          <LoadingPage>
+            <ExamplePage />
           </LoadingPage>
         }
       />
