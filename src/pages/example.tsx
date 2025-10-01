@@ -24,12 +24,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { pluralize } from "@/lib/string";
+import { LEAGUES, SEASONS } from "@/static/sleeper";
 
-const SEASON = 2025;
 const FINAL_WEEK = 18;
 const MIN_SNAPS = 10;
-
-const LEAGUE_ID = "1260340653263437824";
 
 function getRows(data: any[], rostered: Map<string, string>): any[] {
   const weeklyRows = data.map((row: any) => {
@@ -116,18 +114,20 @@ function getRows(data: any[], rostered: Map<string, string>): any[] {
 }
 
 export default function Example() {
+  const [leagueId, setLeagueId] = useState<string>(LEAGUES[0].id);
+  const [season, setSeason] = useState<number>(SEASONS[0]);
   const [opportunityType, setOpportunityType] = useState<
     "all" | "rushing" | "receiving"
   >("all");
 
-  const ownersQuery = useSleeperFetch(`/v1/league/${LEAGUE_ID}/users`);
+  const ownersQuery = useSleeperFetch(`/v1/league/${leagueId}/users`);
   const owners = useMemo(() => {
     return Object.fromEntries(
       ownersQuery.data?.map((row: any) => [row.user_id, row.display_name]) ?? []
     );
   }, [ownersQuery.data]);
 
-  const rostersQuery = useSleeperFetch(`/v1/league/${LEAGUE_ID}/rosters`);
+  const rostersQuery = useSleeperFetch(`/v1/league/${leagueId}/rosters`);
   const rosteredPlayers = useMemo(() => {
     return new Map<string, string>(
       rostersQuery.data?.flatMap((roster: any) =>
@@ -137,7 +137,7 @@ export default function Example() {
   }, [rostersQuery.data, owners]);
 
   const seasonQuery = useSleeperSeasonToDateWeeklyStats(
-    SEASON,
+    season,
     FINAL_WEEK,
     "RB"
   );
@@ -210,11 +210,11 @@ export default function Example() {
     <div className="p-6">
       <h1 className="text-2xl text-center font-bold mb-2">Running Backs</h1>
       <p className="text-sm text-center  text-muted-foreground mb-2">
-        <span>NFL {SEASON} Season to Date</span>
+        <span>NFL {season} Season to Date</span>
         <span> • </span>
         <span>Minimum {pluralize(MIN_SNAPS, "snap", "snaps")}</span>
       </p>
-      <div className="flex justify-center my-4">
+      <div className="flex justify-center gap-4 my-4">
         <Select
           value={opportunityType}
           onValueChange={(value: "all" | "rushing" | "receiving") =>
@@ -230,8 +230,35 @@ export default function Example() {
             <SelectItem value="receiving">Receiving Only</SelectItem>
           </SelectContent>
         </Select>
+        <Select
+          value={season.toString()}
+          onValueChange={(value) => setSeason(parseInt(value))}
+        >
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Select season" />
+          </SelectTrigger>
+          <SelectContent>
+            {SEASONS.map((s) => (
+              <SelectItem key={s} value={s.toString()}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={leagueId} onValueChange={setLeagueId}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select league" />
+          </SelectTrigger>
+          <SelectContent>
+            {LEAGUES.map((league) => (
+              <SelectItem key={league.id} value={league.id}>
+                {league.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <div className="w-full max-w-2xl mx-auto aspect-square">
+      <div className="w-full max-w-4xl mx-auto aspect-square">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart
             data={currentData}
@@ -245,7 +272,7 @@ export default function Example() {
             <CartesianGrid strokeDasharray="3 3" />
             <ReferenceLine
               x={avgOpportunities}
-              stroke="#4A148C"
+              stroke="#808080"
               strokeDasharray="5 5"
               label={{
                 value: `Avg: ${avgOpportunities.toFixed(1)} opp`,
@@ -254,7 +281,7 @@ export default function Example() {
             />
             <ReferenceLine
               y={avgYardsPerOpportunity}
-              stroke="#4A148C"
+              stroke="#808080"
               strokeDasharray="5 5"
               label={{
                 value: `Avg: ${avgYardsPerOpportunity.toFixed(2)} yds`,
