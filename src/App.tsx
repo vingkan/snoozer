@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Layout } from "./components/app/layout";
 import { LoadingPage } from "./components/app/loading";
 import { BASENAME, useStaticRedirect } from "./lib/redirect";
-import NotFoundPage from "./pages/notfound";
 
 const HomePage = lazy(() => import("./pages/index"));
 const ExamplePage = lazy(() => import("./pages/example"));
+const NotFoundPage = lazy(() => import("./pages/notfound"));
 
 function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
