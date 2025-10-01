@@ -1,13 +1,32 @@
-import { lazy, Suspense } from "react";
+import { lazy, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { BASENAME, useStaticRedirect } from "./utils/redirect";
-import { Layout } from "./components/Layout";
-import NotFound from "./pages/NotFound";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Layout } from "./components/app/layout";
+import { LoadingPage } from "./components/app/loading";
+import { BASENAME, useStaticRedirect } from "./lib/redirect";
+import NotFoundPage from "./pages/notfound";
 
-// Lazy load page components
-const HomePage = lazy(() => import("./pages/Home"));
+const HomePage = lazy(() => import("./pages/index"));
 
-function AppPage() {
+function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 3,
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
+
+function AppPages() {
   useStaticRedirect();
 
   return (
@@ -15,12 +34,19 @@ function AppPage() {
       <Route
         path="/"
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          <LoadingPage>
             <HomePage />
-          </Suspense>
+          </LoadingPage>
         }
       />
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="*"
+        element={
+          <LoadingPage>
+            <NotFoundPage />
+          </LoadingPage>
+        }
+      />
     </Routes>
   );
 }
@@ -28,9 +54,11 @@ function AppPage() {
 export default function App() {
   return (
     <Router basename={BASENAME}>
-      <Layout>
-        <AppPage />
-      </Layout>
+      <Providers>
+        <Layout>
+          <AppPages />
+        </Layout>
+      </Providers>
     </Router>
   );
 }
