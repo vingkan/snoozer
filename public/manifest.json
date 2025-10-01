@@ -1,0 +1,19 @@
+{
+    "name": "Snoozer",
+    "short_name": "Snoozer",
+    "description": "Snoozer",
+    "theme_color": "#15263A",
+    "background_color": "#15263A",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+      {
+        "src": "/snoozer/icon.png",
+        "type": "image/png",
+        "sizes": "128x128",
+        "purpose": "any maskable"
+      }
+    ]
+  }
