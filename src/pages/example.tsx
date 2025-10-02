@@ -258,7 +258,7 @@ export default function Example() {
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full max-w-4xl mx-auto aspect-square">
+      <div className="w-full max-w-3xl mx-auto aspect-square">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart
             data={currentData}
