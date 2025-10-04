@@ -8,6 +8,7 @@ import { BASENAME, useStaticRedirect } from "./lib/redirect";
 const HomePage = lazy(() => import("./pages/index"));
 const ExamplePage = lazy(() => import("./pages/example"));
 const DefensePage = lazy(() => import("./pages/defense"));
+const WideReceiversPage = lazy(() => import("./pages/wide-receivers"));
 const NotFoundPage = lazy(() => import("./pages/notfound"));
 
 function Providers({ children }: { children: React.ReactNode }) {
@@ -54,6 +55,14 @@ function AppPages() {
         element={
           <LoadingPage>
             <DefensePage />
+          </LoadingPage>
+        }
+      />
+      <Route
+        path="/wide-receivers"
+        element={
+          <LoadingPage>
+            <WideReceiversPage />
           </LoadingPage>
         }
       />

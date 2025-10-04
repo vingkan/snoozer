@@ -12,6 +12,9 @@ export default function Home() {
         <Link to="/example">
           <Button variant="outline">Running Backs Analysis</Button>
         </Link>
+        <Link to="/wide-receivers">
+          <Button variant="outline">Wide Receivers Analysis</Button>
+        </Link>
         <Link to="/defense">
           <Button variant="outline">Defense Evaluation</Button>
         </Link>
