@@ -1,8 +1,17 @@
-import { useState, useRef, Suspense, useEffect, Component, ErrorInfo, ReactNode } from "react";
+import {
+  useState,
+  useRef,
+  Suspense,
+  useEffect,
+  Component,
+  type ErrorInfo,
+  type ReactNode,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
 import { officeLayout, type Seat } from "@/lib/officeSeating";
 import * as THREE from "three";
+import type { JSX } from "react";
 
 // Error Boundary for React Three Fiber
 class ErrorBoundary extends Component<
@@ -54,24 +63,26 @@ function Seat3D({ seat, onSeatClick, selectedSeatId }: Seat3DProps) {
   const isSelected = selectedSeatId === seat.id;
   const seatSize = 0.4;
   const seatHeight = 0.3;
-  
+
   // Convert 2D coordinates to 3D (scale down and center)
   // Original layout is ~800x850, we'll scale to ~8x8.5 units
   const scale = 0.01;
   const x = (seat.x - officeLayout.width / 2) * scale;
   const z = (seat.y - officeLayout.height / 2) * scale;
   const y = seatHeight / 2; // Seats sit on the floor
-  
+
   // Color coding: green for floater seats, gray for occupied
   const color = seat.isFloater ? "#22c55e" : "#6b7280";
   const selectedColor = "#3b82f6";
-  
+
   // Animate selected seats and hover effect
   useFrame((state) => {
     if (meshRef.current) {
       if (isSelected) {
-        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 2) * 0.1;
-        meshRef.current.position.y = y + Math.sin(state.clock.elapsedTime * 3) * 0.05;
+        meshRef.current.rotation.y =
+          Math.sin(state.clock.elapsedTime * 2) * 0.1;
+        meshRef.current.position.y =
+          y + Math.sin(state.clock.elapsedTime * 3) * 0.05;
       } else if (hovered) {
         meshRef.current.position.y = y + 0.1;
       } else {
@@ -80,7 +91,7 @@ function Seat3D({ seat, onSeatClick, selectedSeatId }: Seat3DProps) {
       }
     }
   });
-  
+
   return (
     <group position={[x, y, z]}>
       <mesh
@@ -106,11 +117,13 @@ function Seat3D({ seat, onSeatClick, selectedSeatId }: Seat3DProps) {
           color={isSelected ? selectedColor : hovered ? "#9ca3af" : color}
           metalness={0.3}
           roughness={0.7}
-          emissive={isSelected ? selectedColor : hovered ? "#ffffff" : "#000000"}
+          emissive={
+            isSelected ? selectedColor : hovered ? "#ffffff" : "#000000"
+          }
           emissiveIntensity={isSelected ? 0.3 : hovered ? 0.1 : 0}
         />
       </mesh>
-      
+
       {/* Seat number label */}
       <Text
         position={[0, seatHeight + 0.1, 0]}
@@ -128,7 +141,7 @@ function Seat3D({ seat, onSeatClick, selectedSeatId }: Seat3DProps) {
 }
 
 interface Area3DProps {
-  area: typeof officeLayout.areas[0];
+  area: (typeof officeLayout.areas)[0];
 }
 
 function Area3D({ area }: Area3DProps) {
@@ -139,10 +152,11 @@ function Area3D({ area }: Area3DProps) {
   const height = area.height * scale;
   const areaHeight = 0.6; // Height of the elevated area
   const wallThickness = 0.05;
-  
+
   // Only elevate IP Conference Room and Mini Lounge Area
-  const shouldElevate = area.id === "ip-conference" || area.id === "mini-lounge";
-  
+  const shouldElevate =
+    area.id === "ip-conference" || area.id === "mini-lounge";
+
   if (shouldElevate) {
     // Elevated structure for conference rooms
     return (
@@ -163,14 +177,10 @@ function Area3D({ area }: Area3DProps) {
             metalness={0.1}
           />
         </mesh>
-        
+
         {/* Side walls - translucent */}
         {/* North wall */}
-        <mesh
-          position={[0, 0, -height / 2]}
-          castShadow
-          receiveShadow
-        >
+        <mesh position={[0, 0, -height / 2]} castShadow receiveShadow>
           <boxGeometry args={[width, areaHeight, wallThickness]} />
           <meshStandardMaterial
             color={area.color}
@@ -179,13 +189,9 @@ function Area3D({ area }: Area3DProps) {
             roughness={0.8}
           />
         </mesh>
-        
+
         {/* South wall */}
-        <mesh
-          position={[0, 0, height / 2]}
-          castShadow
-          receiveShadow
-        >
+        <mesh position={[0, 0, height / 2]} castShadow receiveShadow>
           <boxGeometry args={[width, areaHeight, wallThickness]} />
           <meshStandardMaterial
             color={area.color}
@@ -194,7 +200,7 @@ function Area3D({ area }: Area3DProps) {
             roughness={0.8}
           />
         </mesh>
-        
+
         {/* East wall */}
         <mesh
           position={[width / 2, 0, 0]}
@@ -210,7 +216,7 @@ function Area3D({ area }: Area3DProps) {
             roughness={0.8}
           />
         </mesh>
-        
+
         {/* West wall */}
         <mesh
           position={[-width / 2, 0, 0]}
@@ -226,7 +232,7 @@ function Area3D({ area }: Area3DProps) {
             roughness={0.8}
           />
         </mesh>
-        
+
         {/* Area label */}
         <Text
           position={[0, areaHeight / 2 + 0.1, 0]}
@@ -241,7 +247,7 @@ function Area3D({ area }: Area3DProps) {
       </group>
     );
   }
-  
+
   // Flat marker for Area-2 and Hallway
   return (
     <group position={[x, 0.01, z]}>
@@ -254,7 +260,7 @@ function Area3D({ area }: Area3DProps) {
           roughness={0.8}
         />
       </mesh>
-      
+
       {/* Area label */}
       <Text
         position={[0, 0.1, 0]}
@@ -274,7 +280,7 @@ function Floor() {
   const scale = 0.01;
   const width = officeLayout.width * scale;
   const height = officeLayout.height * scale;
-  
+
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
       <planeGeometry args={[width * 1.2, height * 1.2]} />
@@ -288,16 +294,16 @@ function StadiumWalls() {
   const seatHeight = 0.3;
   const baseHeight = seatHeight * 0.8; // Base tier height
   const wallThickness = 0.15;
-  
+
   // Calculate perimeter dimensions
   const layoutWidth = officeLayout.width * scale;
   const layoutHeight = officeLayout.height * scale;
   const basePadding = 0.4; // Base padding outside the seating area
-  
+
   // Wall positions (centered around origin)
   const baseHalfWidth = layoutWidth / 2 + basePadding;
   const baseHalfHeight = layoutHeight / 2 + basePadding;
-  
+
   // Bowl-style tier configuration: 5 tiers creating a pronounced bowl effect
   // Each tier gets progressively taller and further out
   const numTiers = 5;
@@ -307,23 +313,24 @@ function StadiumWalls() {
     cumulativeHeight: number;
     color: string;
   }> = [];
-  
+
   let cumulativeHeight = 0;
   for (let i = 0; i < numTiers; i++) {
     // Height progression: each tier is 1.6-1.8x taller than previous
     const heightMultiplier = i === 0 ? 1 : 1.7;
-    const tierHeight = i === 0 ? baseHeight : tiers[i - 1].height * heightMultiplier;
-    
+    const tierHeight =
+      i === 0 ? baseHeight : tiers[i - 1].height * heightMultiplier;
+
     // Offset progression: each tier moves wider apart for better top-down visibility
     const offsetIncrement = 0.35;
     const offset = i * offsetIncrement;
-    
+
     cumulativeHeight += tierHeight;
-    
+
     // Color progression: darker as we go up
     const colorIntensity = Math.min(255 - i * 25, 100);
     const color = `rgb(${colorIntensity}, ${colorIntensity}, ${colorIntensity})`;
-    
+
     tiers.push({
       height: tierHeight,
       offset: offset,
@@ -331,7 +338,7 @@ function StadiumWalls() {
       color: color,
     });
   }
-  
+
   // Create wall segments for each side
   const createWallSegment = (
     position: [number, number, number],
@@ -349,25 +356,21 @@ function StadiumWalls() {
       receiveShadow
     >
       <boxGeometry args={[width, height, wallThickness]} />
-      <meshStandardMaterial
-        color={color}
-        roughness={0.85}
-        metalness={0.15}
-      />
+      <meshStandardMaterial color={color} roughness={0.85} metalness={0.15} />
     </mesh>
   );
-  
+
   const walls: JSX.Element[] = [];
-  
+
   // Create walls for each tier - bowl style
   tiers.forEach((tier, tierIndex) => {
     const offset = tier.offset;
     const yPosition = tier.cumulativeHeight - tier.height / 2; // Position at cumulative height
-    
+
     // Calculate width for this tier (gets wider as we go out)
     const tierHalfWidth = baseHalfWidth + offset;
     const tierHalfHeight = baseHalfHeight + offset;
-    
+
     // North wall (top)
     walls.push(
       createWallSegment(
@@ -379,7 +382,7 @@ function StadiumWalls() {
         `wall-north-${tierIndex}`
       )
     );
-    
+
     // South wall (bottom)
     walls.push(
       createWallSegment(
@@ -391,7 +394,7 @@ function StadiumWalls() {
         `wall-south-${tierIndex}`
       )
     );
-    
+
     // East wall (right)
     walls.push(
       createWallSegment(
@@ -403,7 +406,7 @@ function StadiumWalls() {
         `wall-east-${tierIndex}`
       )
     );
-    
+
     // West wall (left)
     walls.push(
       createWallSegment(
@@ -415,7 +418,7 @@ function StadiumWalls() {
         `wall-west-${tierIndex}`
       )
     );
-    
+
     // Corner pieces for each tier - larger and more pronounced
     const cornerSize = wallThickness * 2;
     const cornerPositions: Array<[number, number, number]> = [
@@ -424,7 +427,7 @@ function StadiumWalls() {
       [tierHalfWidth, yPosition, tierHalfHeight], // Bottom-right
       [-tierHalfWidth, yPosition, tierHalfHeight], // Bottom-left
     ];
-    
+
     cornerPositions.forEach((pos, cornerIndex) => {
       walls.push(
         <mesh
@@ -443,7 +446,7 @@ function StadiumWalls() {
       );
     });
   });
-  
+
   return <group>{walls}</group>;
 }
 
@@ -466,20 +469,20 @@ function Scene({
         shadow-mapSize-height={2048}
       />
       <pointLight position={[-10, 10, -10]} intensity={0.5} />
-      
+
       {/* Floor */}
       <Floor />
-      
+
       {/* Stadium Walls */}
       <StadiumWalls />
-      
+
       {/* Areas */}
       {officeLayout.areas
         .filter((area) => area.id !== "area-2" && area.id !== "hallway")
         .map((area) => (
           <Area3D key={area.id} area={area} />
         ))}
-      
+
       {/* Seats */}
       {officeLayout.seats.map((seat) => (
         <Seat3D
@@ -489,7 +492,7 @@ function Scene({
           selectedSeatId={selectedSeatId}
         />
       ))}
-      
+
       {/* OrbitControls for camera interaction */}
       <OrbitControls
         enablePan={true}
@@ -553,7 +556,9 @@ export function OfficeMap() {
           fallback={
             <div className="flex items-center justify-center h-full text-white">
               <div className="text-center">
-                <p className="text-lg font-semibold mb-2">3D View Unavailable</p>
+                <p className="text-lg font-semibold mb-2">
+                  3D View Unavailable
+                </p>
                 <p className="text-sm text-gray-400 mb-4">
                   The 3D visualization requires a compatible browser.
                 </p>
@@ -567,16 +572,19 @@ export function OfficeMap() {
           <Canvas
             camera={{ position: [0, 8, 8], fov: 50 }}
             shadows
-            gl={{ 
-              antialias: true, 
+            gl={{
+              antialias: true,
               alpha: false,
-              powerPreference: "high-performance"
+              powerPreference: "high-performance",
             }}
             dpr={[1, 2]}
             frameloop="always"
           >
             <Suspense fallback={null}>
-              <Scene selectedSeatId={selectedSeatId} onSeatClick={handleSeatClick} />
+              <Scene
+                selectedSeatId={selectedSeatId}
+                onSeatClick={handleSeatClick}
+              />
             </Suspense>
           </Canvas>
         </ErrorBoundary>
@@ -610,14 +618,22 @@ export function OfficeMap() {
               <p className="font-semibold text-sm">Seat {selectedSeat.id}</p>
               {selectedSeat.score !== undefined && (
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">{selectedSeat.score}</span>
-                  <span className="text-xs font-semibold text-gray-600">{selectedSeat.scoreName}</span>
+                  <span className="text-lg font-bold text-green-600">
+                    {selectedSeat.score}
+                  </span>
+                  <span className="text-xs font-semibold text-gray-600">
+                    {selectedSeat.scoreName}
+                  </span>
                 </div>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">{selectedSeat.employee}</p>
+            <p className="text-sm text-muted-foreground">
+              {selectedSeat.employee}
+            </p>
             {selectedSeat.scoreDescription && (
-              <p className="text-xs text-gray-500 italic">{selectedSeat.scoreDescription}</p>
+              <p className="text-xs text-gray-500 italic">
+                {selectedSeat.scoreDescription}
+              </p>
             )}
             {selectedSeat.isFloater && (
               <p className="text-xs text-green-600 font-medium">Floater Seat</p>
