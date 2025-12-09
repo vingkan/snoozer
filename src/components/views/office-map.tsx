@@ -51,6 +51,20 @@ class ErrorBoundary extends Component<
   }
 }
 
+// Helper function to get color class based on score
+function getScoreColor(score: number): string {
+  if (score >= 1 && score <= 3) {
+    return "text-red-600"; // Subpar
+  } else if (score >= 4 && score <= 6) {
+    return "text-yellow-600"; // Good
+  } else if (score >= 7 && score <= 9) {
+    return "text-green-600"; // Great
+  } else if (score === 10) {
+    return "text-green-800"; // Amazing - Dark Green
+  }
+  return "text-gray-600"; // Default fallback
+}
+
 interface Seat3DProps {
   seat: Seat;
   onSeatClick: (seat: Seat) => void;
@@ -618,7 +632,11 @@ export function OfficeMap() {
               <p className="font-semibold text-sm">Seat {selectedSeat.id}</p>
               {selectedSeat.score !== undefined && (
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">
+                  <span
+                    className={`text-lg font-bold ${getScoreColor(
+                      selectedSeat.score
+                    )}`}
+                  >
                     {selectedSeat.score}
                   </span>
                   <span className="text-xs font-semibold text-gray-600">
