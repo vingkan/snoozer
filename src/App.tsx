@@ -9,6 +9,7 @@ const HomePage = lazy(() => import("./pages/index"));
 const ExamplePage = lazy(() => import("./pages/example"));
 const DefensePage = lazy(() => import("./pages/defense"));
 const WideReceiversPage = lazy(() => import("./pages/wide-receivers"));
+const OfficeMapPage = lazy(() => import("./pages/office-map"));
 const NotFoundPage = lazy(() => import("./pages/notfound"));
 
 function Providers({ children }: { children: React.ReactNode }) {
@@ -63,6 +64,14 @@ function AppPages() {
         element={
           <LoadingPage>
             <WideReceiversPage />
+          </LoadingPage>
+        }
+      />
+      <Route
+        path="/office-map"
+        element={
+          <LoadingPage>
+            <OfficeMapPage />
           </LoadingPage>
         }
       />

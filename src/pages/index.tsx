@@ -8,7 +8,7 @@ export default function Home() {
       <p className="text-lg text-muted-foreground">
         Fantasy Football Analytics
       </p>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap justify-center">
         <Link to="/example">
           <Button variant="outline">Running Backs Analysis</Button>
         </Link>
@@ -17,6 +17,9 @@ export default function Home() {
         </Link>
         <Link to="/defense">
           <Button variant="outline">Defense Evaluation</Button>
+        </Link>
+        <Link to="/office-map">
+          <Button variant="outline">Office Seating Map</Button>
         </Link>
       </div>
     </div>
